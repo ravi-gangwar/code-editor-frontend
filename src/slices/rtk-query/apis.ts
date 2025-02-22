@@ -1,4 +1,5 @@
 import { token } from '@/constants/constants';
+import getBackendURI from '@/lib/getBackendURI';
 import { getItem } from '@/lib/localStorage';
 import { LoginResponse, SignupResponse, TExecutionResponse, GetUserResponse, ExecutionType, GetSubmissionsResponse } from '@/types';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
@@ -7,7 +8,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 export const api = createApi({
   reducerPath: 'apis',
     baseQuery: fetchBaseQuery({ 
-    baseUrl: "http://localhost:5001/api/v1/",
+    baseUrl: getBackendURI("production"),
     prepareHeaders: (headers) => {
       headers.set("Content-Type", "application/json");
       headers.set("authorization", `Bearer ${getItem(token)}` || "");
