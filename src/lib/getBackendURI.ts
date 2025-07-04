@@ -1,8 +1,16 @@
-const getBackendURI = (environment: "development" | "production") => {
-    if(environment === "development"){
-        return "http://localhost:5001/api/v1/"
+const getBackendURI = () => {
+    console.log(process.env.NEXT_ENV)
+    if(process.env.NEXT_ENV === "production"){
+        return "http://localhost:5002/api/v1/"
     }
-    return "https://code-editor-backend-0pia.onrender.com/api/v1/"
+    return "http://35.193.251.11:5000/api/v1/"
 }
 
-export default getBackendURI;
+const getSocketURI = () => {
+    if(process.env.NEXT_ENV === "production"){
+        return "ws://localhost:8080"
+    }
+    return "ws://35.193.251.11:8080"
+}
+
+export { getBackendURI, getSocketURI };

@@ -1,5 +1,5 @@
 import { token } from '@/constants/constants';
-import getBackendURI from '@/lib/getBackendURI';
+import { getBackendURI } from '@/lib/getBackendURI';
 import { getItem } from '@/lib/localStorage';
 import { LoginResponse, SignupResponse, TExecutionResponse, GetUserResponse, ExecutionType, GetSubmissionsResponse } from '@/types';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
@@ -7,8 +7,8 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 // Define a service using a base URL and expected endpoints
 export const api = createApi({
   reducerPath: 'apis',
-    baseQuery: fetchBaseQuery({ 
-    baseUrl: getBackendURI("production"),
+    baseQuery: fetchBaseQuery({
+    baseUrl: getBackendURI(),
     prepareHeaders: (headers) => {
       headers.set("Content-Type", "application/json");
       headers.set("authorization", `Bearer ${getItem(token)}` || "");
