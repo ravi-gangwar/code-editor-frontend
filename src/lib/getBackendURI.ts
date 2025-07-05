@@ -1,16 +1,16 @@
 const getBackendURI = () => {
     console.log(process.env.NEXT_ENV)
     if(process.env.NEXT_ENV === "production"){
-        return "http://localhost:5002/api/v1/"
+        return process.env.NEXT_PUBLIC_BACKEND_URI
     }
-    return "http://34.28.102.147:5000/api/v1/"
+    return process.env.NEXT_PUBLIC_BACKEND_URI
 }
 
 const getSocketURI = () => {
     if(process.env.NEXT_ENV === "production"){
-        return "ws://localhost:8080"
+        return process.env.NEXT_PUBLIC_SOCKET_URI
     }
-    return "ws://34.28.102.147:8080"
+    return process.env.NEXT_PUBLIC_SOCKET_URI
 }
 
 export { getBackendURI, getSocketURI };
