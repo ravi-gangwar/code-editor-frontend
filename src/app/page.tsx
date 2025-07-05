@@ -12,7 +12,6 @@ import { v4 as uuidv4 } from "uuid";
 export default function Home() {
   return (
     <div className="min-h-screen bg-white dark:bg-dark-900">
-      {/* Hero Section */}
       <motion.section
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -39,7 +38,6 @@ export default function Home() {
             </motion.p>
           </div>
 
-          {/* Code Example */}
           <motion.div
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
