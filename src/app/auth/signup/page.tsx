@@ -9,6 +9,7 @@ import { ApiError } from "@/types";
 import { token } from "@/constants/constants";
 import { setItem } from "@/lib/localStorage";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function SignUp() {
   const [email, setEmail] = useState("");
@@ -17,6 +18,9 @@ export default function SignUp() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [signup, { isLoading }] = useSignupMutation();
+
+  // Prevent authenticated users from accessing signup page
+  const { isLoading: authLoading } = useAuth(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,6 +48,15 @@ export default function SignUp() {
       toast.error(apiError.data.message);
     }
   };
+
+  // Show loading while checking authentication
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-dark-900">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-dark-900 py-12 px-4 sm:px-6 lg:px-8">

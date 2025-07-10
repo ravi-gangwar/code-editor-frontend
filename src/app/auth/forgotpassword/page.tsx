@@ -1,16 +1,29 @@
-"use client"
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Mail } from 'lucide-react';
-import { toast } from 'react-toastify';
+"use client";
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { Mail } from "lucide-react";
+import { toast } from "react-toastify";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function ForgotPassword() {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
+
+  // Prevent authenticated users from accessing forgot password page
+  const { isLoading: authLoading } = useAuth(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success('Password reset functionality will be implemented soon!');
+    toast.success("Password reset functionality will be implemented soon!");
   };
+
+  // Show loading while checking authentication
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
@@ -24,12 +37,16 @@ export default function ForgotPassword() {
             Reset your password
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
-            Enter your email address and we&apos;ll send you a link to reset your password.
+            Enter your email address and we&apos;ll send you a link to reset
+            your password.
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div>``
-            <label htmlFor="email" className="sr-only">Email address</label>
+          <div>
+            ``
+            <label htmlFor="email" className="sr-only">
+              Email address
+            </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Mail className="h-5 w-5 text-gray-400" />
@@ -61,4 +78,4 @@ export default function ForgotPassword() {
       </motion.div>
     </div>
   );
-};
+}
