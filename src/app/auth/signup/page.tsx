@@ -1,19 +1,21 @@
-"use client"
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Mail, Lock, User } from 'lucide-react';
-import { toast } from 'react-toastify';
-import { useSignupMutation } from '@/slices/rtk-query/apis';
-import { ApiError } from '@/types';
-import { token } from '@/constants/constants';
-import { setItem } from '@/lib/localStorage';
-import { useRouter } from 'next/navigation';
+"use client";
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { Mail, Lock, User } from "lucide-react";
+import { toast } from "react-toastify";
+import { useSignupMutation } from "@/slices/rtk-query/apis";
+import { ApiError } from "@/types";
+import { token } from "@/constants/constants";
+import { setItem } from "@/lib/localStorage";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function SignUp() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [signup, { isLoading }] = useSignupMutation();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -23,9 +25,16 @@ export default function SignUp() {
     try {
       const response = await signup(data).unwrap();
       if (response.token) {
-        toast.success('Sign up successful!');
-        setItem(token, response.token); 
-        router.push('/');
+        toast.success("Sign up successful!");
+        setItem(token, response.token);
+
+        // Get the intended destination from URL params
+        const redirectTo = searchParams.get("redirect");
+        if (redirectTo) {
+          router.push(decodeURIComponent(redirectTo));
+        } else {
+          router.push("/");
+        }
       } else {
         toast.error("Something went wrong");
       }
@@ -51,7 +60,9 @@ export default function SignUp() {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm space-y-4">
             <div>
-              <label htmlFor="name" className="sr-only">Full name</label>
+              <label htmlFor="name" className="sr-only">
+                Full name
+              </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <User className="h-5 w-5 text-gray-400" />
@@ -69,7 +80,9 @@ export default function SignUp() {
               </div>
             </div>
             <div>
-              <label htmlFor="email" className="sr-only">Email address</label>
+              <label htmlFor="email" className="sr-only">
+                Email address
+              </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Mail className="h-5 w-5 text-gray-400" />
@@ -87,7 +100,9 @@ export default function SignUp() {
               </div>
             </div>
             <div>
-              <label htmlFor="password" className="sr-only">Password</label>
+              <label htmlFor="password" className="sr-only">
+                Password
+              </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Lock className="h-5 w-5 text-gray-400" />
@@ -111,14 +126,29 @@ export default function SignUp() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               type="submit"
-              className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
+                isLoading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
               disabled={isLoading}
             >
-              {isLoading ? 'Signing up...' : 'Sign up'}
+              {isLoading ? "Signing up..." : "Sign up"}
             </motion.button>
+          </div>
+
+          <div className="text-center">
+            <Link
+              href={`/auth/login${
+                searchParams.get("redirect")
+                  ? `?redirect=${searchParams.get("redirect")}`
+                  : ""
+              }`}
+              className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400"
+            >
+              Already have an account? Sign in
+            </Link>
           </div>
         </form>
       </motion.div>
     </div>
   );
-};
+}

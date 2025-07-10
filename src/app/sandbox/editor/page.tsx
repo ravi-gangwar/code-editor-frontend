@@ -16,6 +16,7 @@ import useSocketActions from "@/hooks/useSocketActions";
 import { useSearchParams } from "next/navigation";
 import useSocket from "@/hooks/useSocket";
 import Header from "@/components/sanbox/Header";
+import { useAuth } from "@/hooks/useAuth";
 // Dynamically load MonacoEditor
 const MonacoEditor = dynamic(() => import("@/components/MonacoEditor"), {
   ssr: false,
@@ -35,6 +36,9 @@ export default function Page() {
   const searchParams = useSearchParams();
   const session = searchParams.get("session");
 
+  // Check authentication and redirect if needed
+  const { isLoading: authLoading } = useAuth(true);
+
   useEffect(() => {
     if (!session || session === "undefined") return;
     joinRoom(session as string);
@@ -47,6 +51,15 @@ export default function Page() {
   useUserActivity(30, () => {
     dp(setIsActive(true));
   });
+
+  // Show loading while checking authentication
+  if (authLoading) {
+    return (
+      <div className="min-h-screen mt-16 bg-white dark:bg-dark-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen mt-16 bg-white dark:bg-dark-900 flex flex-col">

@@ -1,20 +1,22 @@
-"use client"
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import Link from 'next/link';
-import { Mail, Lock } from 'lucide-react';
-import { toast } from 'react-toastify';
-import { useLoginMutation } from '@/slices/rtk-query/apis';
-import { token } from '@/constants/constants';
-import { setItem } from '@/lib/localStorage';
-import { ApiError } from '@/types';
-import { useRouter } from 'next/navigation';
+"use client";
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { Mail, Lock } from "lucide-react";
+import { toast } from "react-toastify";
+import { useLoginMutation } from "@/slices/rtk-query/apis";
+import { token } from "@/constants/constants";
+import { setItem } from "@/lib/localStorage";
+import { ApiError } from "@/types";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [login, { isLoading }] = useLoginMutation();
   const router = useRouter();
+  const searchParams = useSearchParams();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const data = { email, password };
@@ -23,7 +25,14 @@ export default function Login() {
       if (response.token) {
         setItem(token, response.token);
       }
-      router.push('/');
+
+      // Get the intended destination from URL params
+      const redirectTo = searchParams.get("redirect");
+      if (redirectTo) {
+        router.push(decodeURIComponent(redirectTo));
+      } else {
+        router.push("/");
+      }
     } catch (error) {
       const apiError = error as ApiError;
       toast.error(apiError.data.message);
@@ -45,7 +54,9 @@ export default function Login() {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm space-y-4">
             <div>
-              <label htmlFor="email" className="sr-only">Email address</label>
+              <label htmlFor="email" className="sr-only">
+                Email address
+              </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Mail className="h-5 w-5 text-gray-400" />
@@ -63,7 +74,9 @@ export default function Login() {
               </div>
             </div>
             <div>
-              <label htmlFor="password" className="sr-only">Password</label>
+              <label htmlFor="password" className="sr-only">
+                Password
+              </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Lock className="h-5 w-5 text-gray-400" />
@@ -82,9 +95,12 @@ export default function Login() {
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col justify-between">
             <div className="text-sm">
-              <Link href="/auth/forgotpassword" className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400">
+              <Link
+                href="/auth/forgotpassword"
+                className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400"
+              >
                 Forgot your password?
               </Link>
             </div>
@@ -97,11 +113,23 @@ export default function Login() {
               type="submit"
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
-              {isLoading ? 'Logging in...' : 'Login'}
+              {isLoading ? "Logging in..." : "Login"}
             </motion.button>
+          </div>
+          <div className="text-sm">
+            <Link
+              href={`/auth/signup${
+                searchParams.get("redirect")
+                  ? `?redirect=${searchParams.get("redirect")}`
+                  : ""
+              }`}
+              className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400"
+            >
+              Don&apos;t have an account? Sign up
+            </Link>
           </div>
         </form>
       </motion.div>
     </div>
   );
-};
+}
