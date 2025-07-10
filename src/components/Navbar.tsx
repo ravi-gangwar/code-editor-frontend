@@ -6,11 +6,11 @@ import Link from "next/link";
 import { Code2, User, Menu, X, LogOut } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { removeItem } from "@/lib/localStorage";
-import { useRouter } from "next/navigation";
-import { useGetUserQuery } from "@/slices/rtk-query/apis";
-import { token } from "@/constants/constants";
+import { useRouter, usePathname } from "next/navigation";
+import { useGetUserQuery, api } from "@/slices/rtk-query/apis";
+import { token as tokenConstant } from "@/constants/constants";
 import { useSelector, useDispatch } from "react-redux";
-import { logout, selectUser } from "@/slices/user";
+import { logout, selectUser, selectToken } from "@/slices/user";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -21,14 +21,26 @@ import { Button, Flex } from "@radix-ui/themes";
 
 const Navbar = () => {
   const dispatch = useDispatch();
-  useGetUserQuery();
+  const token = useSelector(selectToken);
+
+  // Only fetch user data if we have a token
+  useGetUserQuery(undefined, {
+    skip: !token,
+  });
+
   const userInfo = useSelector(selectUser);
   const router = useRouter();
+  const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  // Check if user is on an auth page
+  const isOnAuthPage = pathname?.startsWith("/auth/");
+
   const handleLogout = () => {
-    removeItem(token);
+    removeItem(tokenConstant);
     dispatch(logout());
+    // Reset API cache to clear any cached user data
+    dispatch(api.util.resetApiState());
     router.push("/auth/login");
   };
 
@@ -71,7 +83,7 @@ const Navbar = () => {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            ) : (
+            ) : !isOnAuthPage ? (
               <>
                 <Link
                   href="/auth/login"
@@ -86,7 +98,7 @@ const Navbar = () => {
                   Sign Up
                 </Link>
               </>
-            )}
+            ) : null}
           </div>
           <div className="md:hidden flex items-center">
             <Button variant="ghost" onClick={() => setIsMenuOpen(!isMenuOpen)}>
@@ -119,7 +131,7 @@ const Navbar = () => {
                 <LogOut className="w-4 h-4 mr-2" /> Logout
               </Button>
             </div>
-          ) : (
+          ) : !isOnAuthPage ? (
             <>
               <Link
                 href="/auth/login"
@@ -134,7 +146,7 @@ const Navbar = () => {
                 Sign Up
               </Link>
             </>
-          )}
+          ) : null}
         </Flex>
       )}
     </nav>
