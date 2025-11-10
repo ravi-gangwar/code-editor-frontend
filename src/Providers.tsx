@@ -3,6 +3,7 @@ import React from "react";
 import { ToastContainer } from "react-toastify";
 import { ThemeProvider } from "./context/useContext";
 import Navbar from "./components/Navbar";
+import MainAlert from "./components/MainAlert";
 import { store } from "./app/store";
 import { Provider } from "react-redux";
 import { Theme } from "@radix-ui/themes";
@@ -17,6 +18,7 @@ function Providers({ children }: { children: React.ReactNode }) {
           <Theme>
             <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
               <Navbar />
+              <MainAlert />
               {children}
               <ToastContainer position="top-right" />
             </div>
