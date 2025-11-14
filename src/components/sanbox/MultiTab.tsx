@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { Flex, Tabs } from "@radix-ui/themes";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,7 +19,9 @@ function MultiTab() {
 
   const handleLanguageChange = (lng: string) => {
     dp(setLanguage(lng));
-    setLanguageSocket(lng, roomId as string);
+    if (roomId) {
+      setLanguageSocket(lng, roomId as string);
+    }
   };
 
   return (
@@ -45,3 +48,4 @@ function MultiTab() {
 }
 
 export default MultiTab;
+

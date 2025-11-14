@@ -45,7 +45,7 @@ const useSocket = () => {
             console.log("Closing socket");
             ws.close();
         };
-    }, []);
+    }, [dp]);
 
     return socket;
 };

@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { api } from "./rtk-query/apis";
 import { RootState } from "@/app/store";
 
@@ -23,6 +23,10 @@ const userSlice = createSlice({
       state.token = null;
       state.userInfo = null;
     },
+    setUser: (state, action: PayloadAction<{ token: string; userInfo: { name: string; email: string } | null }>) => {
+      state.token = action.payload.token;
+      state.userInfo = action.payload.userInfo;
+    },
   },
   extraReducers: (builder) => {
     builder.addMatcher(
@@ -43,7 +47,7 @@ const userSlice = createSlice({
 });
 
 // 🔹 Export Actions & Reducer
-export const { logout } = userSlice.actions;
+export const { logout, setUser } = userSlice.actions;
 export default userSlice.reducer;
 
 export const selectUser = (state: RootState) => state.user.userInfo;

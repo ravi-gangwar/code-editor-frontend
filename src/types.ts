@@ -38,6 +38,13 @@ export type GetUserResponse = {
 
 export type TExecutionResponse = { output: string, executionTime: string, memoryUsage: string, message: string }
 
+export type CodeRunResponse = {
+  id: string;
+  lang: string;
+  output?: string;
+  error?: string;
+}
+
 export type ExecutionType = "submission" |  "execution";
 
 export type GetSubmissionsResponse = {

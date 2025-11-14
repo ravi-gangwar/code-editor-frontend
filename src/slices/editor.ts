@@ -1,5 +1,5 @@
 import { RootState } from "@/app/store";
-import { JavaCodeTemplate } from "@/constants/constants";
+import { EDITOR_DEFAULTS } from "@/constants/constants";
 import { TExecutionResponse } from "@/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
@@ -11,7 +11,6 @@ type TTabs = {
   content: string;
 };
 
-
 type TInitialState = {
   ActiveLanguage: TLangs | string;
   multiTabs: TTabs[];
@@ -20,12 +19,8 @@ type TInitialState = {
 };
 
 const initialState: TInitialState = {
-  ActiveLanguage: "Javascript",
-  multiTabs: [
-      { name: "index.js", language: "Javascript", content: "console.log('Hello World')" },
-      { name: "main.py", language: "Python", content: "print('Hello World')" },
-      { name: "MyClass.java", language: "Java", content: JavaCodeTemplate },
-    ],
+  ActiveLanguage: EDITOR_DEFAULTS.ACTIVE_LANGUAGE,
+  multiTabs: [...EDITOR_DEFAULTS.MULTI_TABS],
   executionResponse: null,
   isActive: false,
 };

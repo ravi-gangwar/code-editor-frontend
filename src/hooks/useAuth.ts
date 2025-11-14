@@ -3,6 +3,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { selectUser, selectToken } from '@/slices/user';
 import { useGetUserQuery } from '@/slices/rtk-query/apis';
+import { ROUTES } from '@/constants/constants';
 
 export const useAuth = (requireAuth: boolean = false, redirectTo?: string) => {
   const router = useRouter();
@@ -19,14 +20,14 @@ export const useAuth = (requireAuth: boolean = false, redirectTo?: string) => {
     if (isLoading) return;
 
     const isAuthenticated = !!(user || userData);
-    const isOnAuthPage = typeof window !== 'undefined' && window.location.pathname.startsWith('/auth/');
+    const isOnAuthPage = typeof window !== 'undefined' && window.location.pathname.startsWith(ROUTES.AUTH.BASE);
 
     // If user is not authenticated and auth is required
     if (requireAuth && !isAuthenticated) {
       const currentPath = typeof window !== 'undefined' ? window.location.pathname + window.location.search : '/';
       const intendedDestination = redirectTo || searchParams.get('redirect') || currentPath;
       
-      router.push(`/auth/login?redirect=${encodeURIComponent(intendedDestination)}`);
+      router.push(`${ROUTES.AUTH.LOGIN}?redirect=${encodeURIComponent(intendedDestination)}`);
       return;
     }
 
@@ -36,7 +37,7 @@ export const useAuth = (requireAuth: boolean = false, redirectTo?: string) => {
       if (intendedDestination) {
         router.push(decodeURIComponent(intendedDestination));
       } else {
-        router.push('/');
+        router.push(ROUTES.HOME);
       }
     }
   }, [user, userData, isLoading, requireAuth, redirectTo, router, searchParams]);

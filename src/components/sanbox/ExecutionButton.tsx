@@ -1,3 +1,4 @@
+"use client";
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../CustomButton";
 import { Activelanguage, setExecutionResponse, tabs } from "@/slices/editor";
@@ -8,6 +9,7 @@ import { Execution, Submission } from "@/constants/constants";
 import useSocket from "@/hooks/useSocket";
 import useSocketActions from "@/hooks/useSocketActions";
 import { useSearchParams } from "next/navigation";
+
 const ExecutionButton = () => {
   const dp = useDispatch();
   const [executeCode] = useCodeExecuteMutation();
@@ -35,7 +37,9 @@ const ExecutionButton = () => {
         });
         if (response.data) {
           dp(setExecutionResponse(response.data));
-          setOutput(JSON.stringify(response.data), roomId as string);
+          if (roomId) {
+            setOutput(JSON.stringify(response.data), roomId as string);
+          }
         }
         setIsLoadingSubmission(false);
       } catch (error) {
@@ -52,7 +56,9 @@ const ExecutionButton = () => {
         });
         if (response.data) {
           dp(setExecutionResponse(response.data));
-          setOutput(JSON.stringify(response.data), roomId as string);
+          if (roomId) {
+            setOutput(JSON.stringify(response.data), roomId as string);
+          }
         }
         setIsLoadingExecution(false);
       } catch (error) {
@@ -83,3 +89,4 @@ const ExecutionButton = () => {
 };
 
 export default ExecutionButton;
+
