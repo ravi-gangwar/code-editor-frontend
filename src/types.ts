@@ -44,15 +44,3 @@ export type CodeRunResponse = {
   output?: string;
   error?: string;
 }
-
-export type ExecutionType = "submission" |  "execution";
-
-export type GetSubmissionsResponse = {
-    id: string;
-    code: string;
-    language: string;
-    createdAt: string;
-    status: string;
-    updatedAt: string;
-    message: string;
-}[];

@@ -16,9 +16,7 @@ export const API_ENDPOINTS = {
     GOOGLE: 'api/v1/auth/google',
   },
   CODE: {
-    EXECUTE: 'code/execute',
     RUN: 'api/v1/code/run',
-    SUBMISSIONS: 'code/submissions',
   },
 } as const;
 
@@ -33,15 +31,7 @@ export const ROUTES = {
     SIGNUP: '/auth/signup',
     CALLBACK: '/auth/callback',
   },
-  SANDBOX: '/sandbox',
 } as const;
-
-// ============================================
-// Execution Types
-// ============================================
-export const Submission = "submission";
-export const Execution = "execution";
-export const Guest = "guest";
 
 // ============================================
 // Language Configuration
@@ -75,7 +65,9 @@ export const DEFAULT_CODE_TEMPLATES: Record<string, string> = {
   java: "public class Main {\n    public static void main(String[] args) {\n        System.out.println(\"Hello, World!\");\n    }\n}",
 };
 
-// Legacy code templates (for backward compatibility)
+// ============================================
+// Code Example (for homepage display)
+// ============================================
 export const codeExample = `// Example code
 function fibonacci(n) {
   if (n <= 1) return n;
@@ -84,36 +76,17 @@ function fibonacci(n) {
 
 console.log(fibonacci(10));`;
 
-export const JavaCodeTemplate = DEFAULT_CODE_TEMPLATES.java;
-
-// Legacy languages array (for backward compatibility)
-export const languages = ['Javascript', 'Python', 'Java'];
-
 // ============================================
-// Editor Defaults
+// Editor Defaults (for Redux editor slice)
 // ============================================
 export const EDITOR_DEFAULTS = {
   ACTIVE_LANGUAGE: "Javascript",
   MULTI_TABS: [
     { name: "index.js", language: "Javascript", content: "console.log('Hello World')" },
     { name: "main.py", language: "Python", content: "print('Hello World')" },
-    { name: "MyClass.java", language: "Java", content: JavaCodeTemplate },
+    { name: "MyClass.java", language: "Java", content: DEFAULT_CODE_TEMPLATES.java },
   ],
 } as const;
-
-// ============================================
-// WebSocket Event Names
-// ============================================
-export enum EventName {
-  JoinRoom = "join-room",
-  LeaveRoom = "leave-room",
-  SendMessage = "send-message",
-  CreateRoom = "create-room",
-  Error = "error",
-  ReceivedMessage = "received-message",
-  SetLanguage = "set-language",
-  SetOutput = "set-output",
-}
 
 // ============================================
 // HTTP Headers

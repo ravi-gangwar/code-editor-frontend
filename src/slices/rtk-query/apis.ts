@@ -1,6 +1,6 @@
 import { token, API_ENDPOINTS, HTTP_HEADERS } from '@/constants/constants';
 import { getItem } from '@/lib/localStorage';
-import { LoginResponse, SignupResponse, TExecutionResponse, CodeRunResponse, GetUserResponse, ExecutionType, GetSubmissionsResponse } from '@/types';
+import { LoginResponse, SignupResponse, CodeRunResponse, GetUserResponse } from '@/types';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const api = createApi({
@@ -35,13 +35,6 @@ export const api = createApi({
         body: { email },
       }),
     }),
-    codeExecute: builder.mutation<TExecutionResponse, { code: string, language: string, type: ExecutionType }>({
-      query: ({ code, language, type }) => ({
-        url: API_ENDPOINTS.CODE.EXECUTE,
-        method: 'POST',
-        body: { code, language, type },
-      }),
-    }),
     codeRun: builder.mutation<CodeRunResponse, { code: string, lang: string }>({
       query: ({ code, lang }) => ({
         url: API_ENDPOINTS.CODE.RUN,
@@ -54,18 +47,11 @@ export const api = createApi({
         url: API_ENDPOINTS.AUTH.USER,
       }),
     }),
-    getSubmissions: builder.query<GetSubmissionsResponse, void>({
-      query: () => ({
-        url: API_ENDPOINTS.CODE.SUBMISSIONS,
-      }),
-    }),
   }),
 });
 
 export const { 
-  useGetSubmissionsQuery, 
   useLoginMutation, 
-  useCodeExecuteMutation,
   useCodeRunMutation,
   useSignupMutation, 
   useResetPasswordMutation, 

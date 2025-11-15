@@ -25,7 +25,7 @@ const Navbar = () => {
   });
 
   const isOnAuthPage = pathname?.startsWith(ROUTES.AUTH.BASE);
-  const isOnEditorPage = pathname && pathname !== ROUTES.HOME && !pathname.startsWith(ROUTES.AUTH.BASE) && !pathname.startsWith(ROUTES.SANDBOX);
+  const isOnEditorPage = pathname && pathname !== ROUTES.HOME && !pathname.startsWith(ROUTES.AUTH.BASE);
 
   const handleLogout = () => {
     removeItem(tokenConstant);
