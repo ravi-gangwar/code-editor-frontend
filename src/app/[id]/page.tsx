@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams } from "next/navigation";
 import EditorHeader from "@/components/editor/EditorHeader";
 import EditorSidebar from "@/components/editor/EditorSidebar";
@@ -9,6 +9,8 @@ import OutputModal from "@/components/editor/OutputModal";
 import { useCodeRunMutation } from "@/slices/rtk-query/apis";
 import { DEFAULT_CODE_TEMPLATES, DEFAULT_LANGUAGE } from "@/constants/constants";
 import { toast } from "sonner";
+import { useSocketIO } from "@/hooks/useSocketIO";
+import useSocketIOActions from "@/hooks/useSocketIOActions";
 
 const MonacoEditor = dynamic(() => import("@/components/editor/SimpleMonacoEditor"), {
   ssr: false,
@@ -29,6 +31,45 @@ export default function EditorPage() {
   const [runCode] = useCodeRunMutation();
   const [isInitialized, setIsInitialized] = useState(false);
   const [lastLanguage, setLastLanguage] = useState<string | null>(null);
+  
+  // Refs to prevent infinite loops when receiving socket updates
+  const isReceivingUpdateRef = useRef(false);
+  const codeDebounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Socket.IO integration for real-time collaboration
+  const { socket, isConnected, connectionCount } = useSocketIO({
+    roomId: id,
+    enabled: !!id,
+    onCodeChange: (newCode: string) => {
+      isReceivingUpdateRef.current = true;
+      setCode(newCode);
+      // Save to localStorage when receiving updates
+      localStorage.setItem(`code-${id}`, newCode);
+      setTimeout(() => {
+        isReceivingUpdateRef.current = false;
+      }, 100);
+    },
+    onLanguageChange: (newLanguage: string, providedCode?: string) => {
+      isReceivingUpdateRef.current = true;
+      setSelectedLanguage(newLanguage);
+      setLastLanguage(newLanguage);
+      
+      // Use provided code if available, otherwise use default boilerplate
+      const codeToUse = providedCode || DEFAULT_CODE_TEMPLATES[newLanguage] || "";
+      if (codeToUse) {
+        setCode(codeToUse);
+        localStorage.setItem(`code-${id}`, codeToUse);
+      }
+      
+      localStorage.setItem(`lang-${id}`, newLanguage);
+      setTimeout(() => {
+        isReceivingUpdateRef.current = false;
+      }, 100);
+    },
+  });
+
+  // Socket.IO actions
+  const { broadcastCode, broadcastLanguage } = useSocketIOActions({ socket, isConnected });
 
   // Load saved code or initialize with default
   useEffect(() => {
@@ -69,9 +110,45 @@ export default function EditorPage() {
       setCode(currentDefault);
     }
     
+    // Broadcast language change if not receiving an update
+    if (!isReceivingUpdateRef.current && isConnected) {
+      // Include the new code (default boilerplate) with language change
+      broadcastLanguage(selectedLanguage, currentDefault);
+    }
+    
     // Update last language
     setLastLanguage(selectedLanguage);
-  }, [selectedLanguage, isInitialized, lastLanguage]);
+  }, [selectedLanguage, isInitialized, lastLanguage, isConnected, broadcastLanguage]);
+
+  // Debounced code broadcasting
+  const handleCodeChange = useCallback((newCode: string) => {
+    setCode(newCode);
+    
+    // Clear existing timer
+    if (codeDebounceTimerRef.current) {
+      clearTimeout(codeDebounceTimerRef.current);
+    }
+    
+    // Only broadcast if not receiving an update and socket is connected
+    if (!isReceivingUpdateRef.current && isConnected) {
+      // Debounce broadcasts to avoid too many messages
+      codeDebounceTimerRef.current = setTimeout(() => {
+        broadcastCode(newCode);
+      }, 500); // 500ms debounce
+    }
+    
+    // Save to localStorage
+    localStorage.setItem(`code-${id}`, newCode);
+  }, [id, isConnected, broadcastCode]);
+
+  // Cleanup debounce timer on unmount
+  useEffect(() => {
+    return () => {
+      if (codeDebounceTimerRef.current) {
+        clearTimeout(codeDebounceTimerRef.current);
+      }
+    };
+  }, []);
 
   const handleRun = async () => {
     if (!code.trim()) {
@@ -149,21 +226,30 @@ export default function EditorPage() {
       {/* Top Header */}
       <EditorHeader
         selectedLanguage={selectedLanguage}
-        onLanguageChange={setSelectedLanguage}
+        onLanguageChange={(lang) => {
+          setSelectedLanguage(lang);
+          // Broadcast language change immediately with the new default code
+          if (!isReceivingUpdateRef.current && isConnected) {
+            const defaultCode = DEFAULT_CODE_TEMPLATES[lang];
+            broadcastLanguage(lang, defaultCode);
+          }
+        }}
         onSave={handleSave}
         onShare={handleShare}
         onRun={handleRun}
         isRunning={isRunning}
+        isConnected={isConnected}
+        connectionCount={connectionCount}
       />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex min-h-0">
+      <div className="flex-1 flex min-h-0 relative">
         {/* Editor */}
-        <div className="flex-1 relative min-h-0">
+        <div className="flex-1 relative min-h-0 pb-16 md:pb-0">
           <MonacoEditor
             language={selectedLanguage}
             value={code}
-            onChange={setCode}
+            onChange={handleCodeChange}
           />
         </div>
 
