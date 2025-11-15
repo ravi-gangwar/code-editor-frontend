@@ -47,6 +47,32 @@ export const api = createApi({
         url: API_ENDPOINTS.AUTH.USER,
       }),
     }),
+    wakeUpCodeExecute: builder.query<{ status: string; pid?: number }, void>({
+      queryFn: async () => {
+        try {
+          const response = await fetch('https://code-execute-7t0f.onrender.com/health', {
+            method: 'GET',
+          });
+          const data = await response.json();
+          return { data };
+        } catch (error) {
+          return { error: { status: 'CUSTOM_ERROR', error: String(error) } };
+        }
+      },
+    }),
+    wakeUpBackend: builder.query<string, void>({
+      queryFn: async () => {
+        try {
+          const response = await fetch('https://code-editor-backend-0pia.onrender.com', {
+            method: 'GET',
+          });
+          const data = await response.text();
+          return { data };
+        } catch (error) {
+          return { error: { status: 'CUSTOM_ERROR', error: String(error) } };
+        }
+      },
+    }),
   }),
 });
 
@@ -55,5 +81,7 @@ export const {
   useCodeRunMutation,
   useSignupMutation, 
   useResetPasswordMutation, 
-  useGetUserQuery 
+  useGetUserQuery,
+  useWakeUpCodeExecuteQuery,
+  useWakeUpBackendQuery,
 } = api;
