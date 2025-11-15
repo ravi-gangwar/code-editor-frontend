@@ -2,7 +2,7 @@
 import React from "react";
 import Link from "next/link";
 import { User, LogOut, Menu, X } from "lucide-react";
-import { Button, Flex } from "@radix-ui/themes";
+import { Button } from "@radix-ui/themes";
 import { ROUTES } from "@/constants/constants";
 import { ThemeToggle } from "../ThemeToggle";
 
@@ -29,42 +29,40 @@ export default function MobileNav({
         </Button>
       </div>
       {isOpen && (
-        <Flex
-          direction="row-reverse"
-          align="center"
-          justify="between"
-          className="md:hidden px-4 pt-2 pb-3"
-        >
-          <ThemeToggle />
-          {userInfo ? (
-            <div className="flex flex-col space-y-2">
-              <div className="flex items-center space-x-2">
-                <User className="w-8 h-8 text-gray-600 dark:text-gray-400" />
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                  {userInfo?.name || "User"}
-                </span>
+        <div className="md:hidden absolute top-full left-0 right-0 bg-gray-200 dark:bg-dark-900 border-t border-gray-300 dark:border-gray-700 px-4 py-3">
+          <div className="flex items-center justify-between">
+            {userInfo ? (
+              <div className="flex items-center gap-3 flex-1">
+                <div className="flex items-center space-x-2">
+                  <User className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                    {userInfo?.name || "User"}
+                  </span>
+                </div>
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    onLogout();
+                    onToggle();
+                  }}
+                  className="flex items-center gap-2"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Logout</span>
+                </Button>
               </div>
-              <Button variant="ghost" onClick={onLogout} className="w-full">
-                <LogOut className="w-4 h-4 mr-2" /> Logout
-              </Button>
-            </div>
-          ) : !isOnAuthPage ? (
-            <>
+            ) : !isOnAuthPage ? (
               <Link
                 href={ROUTES.AUTH.LOGIN}
-                className="block px-4 py-2 rounded-md text-sm font-medium hover:text-blue-600 dark:hover:text-blue-400"
+                onClick={onToggle}
+                className="px-4 py-2 rounded-md text-sm font-medium bg-blue-600 text-white hover:bg-blue-700 transition-colors"
               >
                 Login
               </Link>
-              <Link
-                href={ROUTES.AUTH.SIGNUP}
-                className="block px-4 py-2 rounded-md text-sm font-medium bg-blue-600 text-white hover:bg-blue-700 transition-colors"
-              >
-                Sign Up
-              </Link>
-            </>
-          ) : null}
-        </Flex>
+            ) : null}
+            <ThemeToggle />
+          </div>
+        </div>
       )}
     </>
   );
