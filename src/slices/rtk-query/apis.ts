@@ -1,5 +1,4 @@
 import { token, API_ENDPOINTS, HTTP_HEADERS } from '@/constants/constants';
-import { getBackendURI } from '@/lib/getBackendURI';
 import { getItem } from '@/lib/localStorage';
 import { LoginResponse, SignupResponse, TExecutionResponse, CodeRunResponse, GetUserResponse, ExecutionType, GetSubmissionsResponse } from '@/types';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
@@ -7,7 +6,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export const api = createApi({
   reducerPath: 'apis',
   baseQuery: fetchBaseQuery({
-    baseUrl: getBackendURI(),
+    baseUrl: process.env.NEXT_PUBLIC_BACKEND_URI,
     prepareHeaders: (headers) => {
       headers.set("Content-Type", HTTP_HEADERS.CONTENT_TYPE);
       headers.set("authorization", `${HTTP_HEADERS.AUTHORIZATION_PREFIX} ${getItem(token)}` || "");

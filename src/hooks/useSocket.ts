@@ -1,6 +1,5 @@
 import { AppDispatch } from "@/app/store";
 import { EventName } from "@/constants/constants";
-import { getSocketURI } from "@/lib/getBackendURI";
 import { setContent, setExecutionResponse, setLanguage } from "@/slices/editor";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -10,7 +9,7 @@ const useSocket = () => {
     const [socket, setSocket] = useState<WebSocket | null>(null);
 
     useEffect(() => {
-        const ws = new WebSocket(getSocketURI() as string);
+        const ws = new WebSocket(process.env.NEXT_PUBLIC_SOCKET_URI as string);
 
         ws.onopen = () => {
             setSocket(ws);

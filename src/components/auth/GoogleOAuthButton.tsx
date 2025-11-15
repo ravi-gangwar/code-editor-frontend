@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import { motion } from "framer-motion";
-import { getBackendURI } from "@/lib/getBackendURI";
 import { API_ENDPOINTS, ROUTES } from "@/constants/constants";
 
 interface GoogleOAuthButtonProps {
@@ -10,7 +9,7 @@ interface GoogleOAuthButtonProps {
 
 export default function GoogleOAuthButton({ text = "Continue with Google" }: GoogleOAuthButtonProps) {
   const handleGoogleLogin = () => {
-    const backendURI = getBackendURI();
+    const backendURI = process.env.NEXT_PUBLIC_BACKEND_URI;
     const searchParams = typeof window !== "undefined" ? window.location.search : "";
     const redirectParam = typeof window !== "undefined" 
       ? new URLSearchParams(searchParams).get("redirect")
