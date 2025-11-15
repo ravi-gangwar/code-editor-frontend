@@ -12,7 +12,6 @@ const languages = [
   { name: "C++", code: "C++", color: "bg-blue-700", textColor: "text-blue-50", borderColor: "border-blue-700" },
   { name: "Rust", color: "bg-orange-600", textColor: "text-orange-50", borderColor: "border-orange-600", code: "RS" },
   { name: "Go", code: "GO", color: "bg-cyan-500", textColor: "text-cyan-900", borderColor: "border-cyan-500" },
-  { name: "Zig", code: "ZG", color: "bg-amber-600", textColor: "text-amber-50", borderColor: "border-amber-600" },
   { name: "Java", code: "JAVA", color: "bg-red-600", textColor: "text-red-50", borderColor: "border-red-600" },
 ];
 
@@ -34,9 +33,9 @@ export default function MultipleLanguagesSection() {
         </h3>
       </div>
       <p className="mb-8 text-gray-600 dark:text-gray-300 text-lg">
-        Support for 11+ programming languages with real-time syntax highlighting and execution.
+        Support for 10+ programming languages with real-time syntax highlighting and execution.
       </p>
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-11 gap-6">
+      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-10 gap-6">
         {languages.map((lang, index) => (
           <motion.div
             key={lang.name}

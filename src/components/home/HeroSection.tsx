@@ -44,8 +44,6 @@ export default function HeroSection() {
             <span className="font-semibold text-orange-600 dark:text-orange-400">Rust</span>
             {", "}
             <span className="font-semibold text-cyan-600 dark:text-cyan-400">Go</span>
-            {", "}
-            <span className="font-semibold text-amber-600 dark:text-amber-400">Zig</span>
             {", and "}
             <span className="font-semibold text-red-600 dark:text-red-400">Java</span>
             . Write, run, and share your code instantly.

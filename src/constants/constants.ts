@@ -55,7 +55,6 @@ export const SUPPORTED_LANGUAGES = [
   { value: "cpp", label: "C++" },
   { value: "rust", label: "Rust" },
   { value: "go", label: "Go" },
-  { value: "zig", label: "Zig" },
   { value: "java", label: "Java" },
 ] as const;
 
@@ -73,7 +72,6 @@ export const DEFAULT_CODE_TEMPLATES: Record<string, string> = {
   cpp: "#include <iostream>\n\nint main() {\n    std::cout << \"Hello, World!\" << std::endl;\n    return 0;\n}",
   rust: "fn main() {\n    println!(\"Hello, World!\");\n}",
   go: "package main\n\nimport \"fmt\"\n\nfunc main() {\n    fmt.Println(\"Hello, World!\")\n}",
-  zig: "const std = @import(\"std\");\n\npub fn main() !void {\n    const stdout = std.io.getStdOut().writer();\n    try stdout.print(\"Hello, World!\\n\", .{});\n}",
   java: "public class Main {\n    public static void main(String[] args) {\n        System.out.println(\"Hello, World!\");\n    }\n}",
 };
 
