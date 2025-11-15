@@ -54,29 +54,24 @@ export default function EditorPage() {
     setIsInitialized(true);
   }, [id, isInitialized]);
 
-  // Update code when language changes (only if code matches the previous language's default)
+  // Update code when language changes - always update boilerplate
   useEffect(() => {
     if (!isInitialized || !lastLanguage) return;
     
     // Only proceed if language actually changed
     if (selectedLanguage === lastLanguage) return;
     
-    // Get the default code for the previous language
-    const previousDefault = DEFAULT_CODE_TEMPLATES[lastLanguage];
+    // Get the default code for the new language
     const currentDefault = DEFAULT_CODE_TEMPLATES[selectedLanguage];
     
-    // Check if current code matches the previous language's default (allowing for minor whitespace differences)
-    const normalizedCurrentCode = code.trim();
-    const normalizedPreviousDefault = previousDefault?.trim() || "";
-    
-    // If code matches the previous language's default, update to new language's default
-    if (normalizedCurrentCode === normalizedPreviousDefault && currentDefault) {
+    // Always update to the new language's default boilerplate
+    if (currentDefault) {
       setCode(currentDefault);
     }
     
     // Update last language
     setLastLanguage(selectedLanguage);
-  }, [selectedLanguage, isInitialized, lastLanguage, code]);
+  }, [selectedLanguage, isInitialized, lastLanguage]);
 
   const handleRun = async () => {
     if (!code.trim()) {
